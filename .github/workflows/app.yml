@@ -38,6 +38,6 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            docker pull ${{ secrets.DOCKER_USERNAME }}/devops-demo:latest
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/devops-demo:latest
 
-            docker ps
+            sudo docker ps
