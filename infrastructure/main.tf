@@ -45,3 +45,8 @@ resource "aws_instance" "app_server" {
     Name = "tummoc-assignment"
   }
 }
+
+resource "aws_eip" "app_eip" {
+  instance = aws_instance.app_server.id
+  domain = "vpc"
+}
