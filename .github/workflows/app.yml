@@ -40,11 +40,29 @@ jobs:
           script: |
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/devops-demo:latest
 
+            sudo docker stop app || true
+            sudo docker rm app || true
+
             sudo docker run -d -p 80:3000 --name app ${{ secrets.DOCKER_USERNAME }}/devops-demo:latest
 
-            # Start monitoring only if not running
+            # Create prometheus.yml
+            cat <<EOF > prometheus.yml
+            global:
+              scrape_interval: 5s
+            scrape_configs:
+              - job_name: "prometheus"
+                static_configs:
+                  - targets: ["localhost:9090"]
+              - job_name: "app"
+                static_configs:
+                  - targets: ["localhost:80"]
+            EOF
 
-            sudo docker run -d -p 9090:9090 prom/prometheus
-            sudo docker run -d -p 3001:3000 grafana/grafana
+            # Restart Prometheus with config
+            sudo docker stop prometheus || true
+            sudo docker rm prometheus || true
+
+            sudo docker run -d -p 9090:9090 --name prometheus -v $(pwd)/prometheus.yml:/etc/prometheus/prometheus.yml --name prometheus prom/prometheus
+            sudo docker run -d -p 3001:3000 --name grafana grafana/grafana
 
             sudo docker ps
