@@ -16,21 +16,21 @@ resource "aws_security_group" "app_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-    egress {
-        from_port   = 0
-        to_port     = 0
-        protocol    = "-1"
-        cidr_blocks = ["0.0.0.0/0"]
-    }
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }
 
 
 resource "aws_instance" "app_server" {
   ami           = "ami-0ec10929233384c7f"
   instance_type = "t3.micro"
-  key_name = "tummoc"
+  key_name      = "tummoc"
 
-  vpc_security_group_ids = [aws_security_group.app_sg.id]
+  vpc_security_group_ids      = [aws_security_group.app_sg.id]
   associate_public_ip_address = true
 
   user_data = <<-EOF
@@ -48,5 +48,5 @@ resource "aws_instance" "app_server" {
 
 resource "aws_eip" "app_eip" {
   instance = aws_instance.app_server.id
-  domain = "vpc"
+  domain   = "vpc"
 }
